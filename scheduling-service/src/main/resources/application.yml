@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: scheduling-service
+
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
+
+  # H2 Database Configuration 
+  datasource:
+    url: jdbc:h2:mem:pulse_care_scheduling
+    driverClassName: org.h2.Driver
+    username: admin
+    password: admin
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # JPA / Hibernate Configuration 
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # RabbitMQ Configuration 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # GraphQL Configuration 
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      locations: classpath:graphql/
+
+server:
+  port: 8081
+
+rabbitmq:
+  queue:
+    appointment: appointment-queue
+  exchange:
+    appointment: appointment-exchange
+  routing:
+    key:
+      appointment: appointment.created
+
+# JWT Configuration 
+api:
+  security:
+    token:
+      secret: pulse-care-secret-key
