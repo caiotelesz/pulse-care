@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 
 import com.fiap.adjt3.pulse.care.scheduling.dtos.appointment.AppointmentRequestDTO;
 import com.fiap.adjt3.pulse.care.scheduling.dtos.appointment.AppointmentResponseDTO;
+import com.fiap.adjt3.pulse.care.scheduling.enums.AppointmentEventType;
 import com.fiap.adjt3.pulse.care.scheduling.enums.UserRole;
 import com.fiap.adjt3.pulse.care.scheduling.exceptions.ForbiddenException;
 import com.fiap.adjt3.pulse.care.scheduling.exceptions.InvalidRequestException;
 import com.fiap.adjt3.pulse.care.scheduling.exceptions.ResourceNotFoundException;
 import com.fiap.adjt3.pulse.care.scheduling.mappers.AppointmentMapper;
+import com.fiap.adjt3.pulse.care.scheduling.messaging.AppointmentEventPublisher;
 import com.fiap.adjt3.pulse.care.scheduling.models.Appointment;
 import com.fiap.adjt3.pulse.care.scheduling.models.User;
 import com.fiap.adjt3.pulse.care.scheduling.repositories.UserRepository;
@@ -29,6 +31,7 @@ public class AppointmentService {
 
   private final AppointmentRepository appointmentRepository;
   private final UserRepository userRepository;
+  private final AppointmentEventPublisher appointmentEventPublisher;
 
   public AppointmentResponseDTO createAppointment(AppointmentRequestDTO request) {
     log.info("Criando consulta para o paciente {} com o médico {} em {}", request.patientId(), request.doctorId(),
@@ -41,6 +44,8 @@ public class AppointmentService {
 
     Appointment appointment = AppointmentMapper.toEntity(request, patient, doctor);
     Appointment savedAppointment = appointmentRepository.save(appointment);
+
+    appointmentEventPublisher.publish(savedAppointment, AppointmentEventType.CREATED);
 
     return AppointmentMapper.toResponse(savedAppointment);
   }
@@ -63,6 +68,8 @@ public class AppointmentService {
     appointment.setLocation(request.location());
 
     Appointment updatedAppointment = appointmentRepository.save(appointment);
+
+    appointmentEventPublisher.publish(updatedAppointment, AppointmentEventType.UPDATED);
 
     return AppointmentMapper.toResponse(updatedAppointment);
   }
