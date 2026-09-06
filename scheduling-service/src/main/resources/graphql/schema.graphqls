@@ -1,0 +1,28 @@
+type Query {
+    patientAppointments(patientId: ID!, onlyFuture: Boolean = false): [Appointment!]!
+}
+
+type Appointment {
+    id: ID!
+    patient: Patient!
+    doctor: Doctor!
+    appointmentDateTime: String!
+    status: String!
+    specialty: String
+    observation: String
+    location: String
+    createdAt: String!
+}
+
+type Patient {
+    id: ID!
+    name: String!
+    email: String!
+    phone: String
+}
+
+type Doctor {
+    id: ID!
+    name: String!
+    crm: String!
+}
