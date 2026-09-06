@@ -6,21 +6,15 @@ spring:
     mapper:
       accept-case-insensitive-enums: true
 
-  # H2 Database Configuration 
+  # PostgreSQL Database Configuration
   datasource:
-    url: jdbc:h2:mem:pulse_care_scheduling
-    driverClassName: org.h2.Driver
-    username: admin
-    password: admin
+    url: jdbc:postgresql://localhost:5432/pulse_care_scheduling
+    driverClassName: org.postgresql.Driver
+    username: pulsecare
+    password: pulsecare
 
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
-  # JPA / Hibernate Configuration 
+  # JPA / Hibernate Configuration
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     show-sql: true

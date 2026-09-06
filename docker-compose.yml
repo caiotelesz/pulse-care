@@ -1,0 +1,49 @@
+services:
+  postgres-scheduling:
+    image: postgres:16-alpine
+    container_name: pulse-care-postgres-scheduling
+    environment:
+      POSTGRES_DB: pulse_care_scheduling
+      POSTGRES_USER: pulsecare
+      POSTGRES_PASSWORD: pulsecare
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-scheduling-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulsecare -d pulse_care_scheduling"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: pulse-care-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  scheduling-service:
+    build:
+      context: ./scheduling-service
+    container_name: pulse-care-scheduling-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-scheduling:5432/pulse_care_scheduling
+      SPRING_DATASOURCE_USERNAME: pulsecare
+      SPRING_DATASOURCE_PASSWORD: pulsecare
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      postgres-scheduling:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  postgres-scheduling-data:
