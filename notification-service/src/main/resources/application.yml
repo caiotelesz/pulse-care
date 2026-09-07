@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: notification-service
+
+  # RabbitMQ Configuration
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8082
+
+rabbitmq:
+  queue:
+    appointment: appointment-queue
+  exchange:
+    appointment: appointment-exchange
+  routing:
+    key:
+      appointment: appointment.created
