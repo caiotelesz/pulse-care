@@ -426,6 +426,49 @@
           ]
         },
         {
+          "name": "POST /graphql (history-service) - historico do paciente (200)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query($patientId: ID!) { patientAppointmentHistory(patientId: $patientId) { id eventType appointmentId specialty location doctorName appointmentDateTime recordedAt } }\",\n  \"variables\": {\n    \"patientId\": \"{{patientId}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{historyBaseUrl}}/graphql",
+              "host": [
+                "{{historyBaseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Deve retornar 200\", function () {\n    pm.response.to.have.status(200);\n});",
+                  "pm.test(\"Deve conter pelo menos um evento no historico\", function () {\n    const response = pm.response.json();\n    pm.expect(response.data.patientAppointmentHistory.length).to.be.above(0);\n});"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "GET /v1/appointments/patient/{patientId} - historico do paciente (200)",
           "protocolProfileBehavior": {
             "disableBodyPruning": true
@@ -1450,6 +1493,42 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "6) History Service (GraphQL)",
+      "item": [
+        {
+          "name": "POST - Patient appointment history (GraphQL query)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query($patientId: ID!) { patientAppointmentHistory(patientId: $patientId) { id eventType appointmentId specialty location doctorName appointmentDateTime recordedAt } }\",\n  \"variables\": {\n    \"patientId\": \"{{patientId}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{historyBaseUrl}}/graphql",
+              "host": [
+                "{{historyBaseUrl}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
@@ -1480,6 +1559,10 @@
     {
       "key": "appointmentId",
       "value": ""
+    },
+    {
+      "key": "historyBaseUrl",
+      "value": "http://localhost:8083"
     }
   ]
 }

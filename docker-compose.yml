@@ -16,6 +16,23 @@ services:
       timeout: 5s
       retries: 10
 
+  postgres-history:
+    image: postgres:16-alpine
+    container_name: pulse-care-postgres-history
+    environment:
+      POSTGRES_DB: pulse_care_history
+      POSTGRES_USER: pulsecare
+      POSTGRES_PASSWORD: pulsecare
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-history-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulsecare -d pulse_care_history"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: pulse-care-rabbitmq
@@ -57,5 +74,23 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  history-service:
+    build:
+      context: ./history-service
+    container_name: pulse-care-history-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-history:5432/pulse_care_history
+      SPRING_DATASOURCE_USERNAME: pulsecare
+      SPRING_DATASOURCE_PASSWORD: pulsecare
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      postgres-history:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
 volumes:
   postgres-scheduling-data:
+  postgres-history-data:

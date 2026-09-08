@@ -1,0 +1,16 @@
+type Query {
+    patientAppointmentHistory(patientId: ID!): [AppointmentHistoryEntry!]!
+}
+
+type AppointmentHistoryEntry {
+    id: ID!
+    appointmentId: ID!
+    eventType: String!
+    patientId: ID!
+    patientName: String!
+    doctorName: String!
+    appointmentDateTime: String!
+    specialty: String!
+    location: String!
+    recordedAt: String!
+}
