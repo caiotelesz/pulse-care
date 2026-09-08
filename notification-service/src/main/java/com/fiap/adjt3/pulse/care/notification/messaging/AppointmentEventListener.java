@@ -17,7 +17,7 @@ public class AppointmentEventListener {
 
   @RabbitListener(queues = "${rabbitmq.queue.appointment}")
   public void handleAppointmentEvent(AppointmentEventDTO event) {
-    log.info("Evento recebido: {} para a consulta {}", event.eventType(), event.appointmentId());
+    log.info("Received {} event for appointment {}", event.eventType(), event.appointmentId());
 
     sendReminder(event);
   }
@@ -32,6 +32,6 @@ public class AppointmentEventListener {
               event.appointmentDateTime().format(DATE_FORMATTER), event.location());
     };
 
-    log.info("Lembrete enviado para {} <{}>: {}", event.patientName(), event.patientEmail(), message);
+    log.info("Reminder sent to {} <{}>: {}", event.patientName(), event.patientEmail(), message);
   }
 }

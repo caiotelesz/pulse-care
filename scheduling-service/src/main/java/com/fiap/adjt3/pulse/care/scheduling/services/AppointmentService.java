@@ -34,7 +34,7 @@ public class AppointmentService {
   private final AppointmentEventPublisher appointmentEventPublisher;
 
   public AppointmentResponseDTO createAppointment(AppointmentRequestDTO request) {
-    log.info("Criando consulta para o paciente {} com o médico {} em {}", request.patientId(), request.doctorId(),
+    log.info("Creating appointment for patient {} with doctor {} on {}", request.patientId(), request.doctorId(),
         request.appointmentDateTime());
 
     User patient = findUserOrThrow(request.patientId(), "Paciente não encontrado");
@@ -51,7 +51,7 @@ public class AppointmentService {
   }
 
   public AppointmentResponseDTO updateAppointment(UUID id, AppointmentRequestDTO request) {
-    log.info("Atualizando consulta com id: {}", id);
+    log.info("Updating appointment with ID: {}", id);
 
     Appointment appointment = findAppointmentOrThrow(id);
 
@@ -75,13 +75,13 @@ public class AppointmentService {
   }
 
   public AppointmentResponseDTO getAppointmentById(UUID id) {
-    log.info("Buscando uma consulta pelo id: {}", id);
+    log.info("Fetching appointment with ID: {}", id);
 
     Appointment appointment = findAppointmentOrThrow(id);
 
     User currentUser = getAuthenticatedUser();
     if (currentUser.getRole() == UserRole.PATIENT && !currentUser.getId().equals(appointment.getPatient().getId())) {
-      log.warn("Paciente {} tentou visualizar consulta de outro paciente ({})", currentUser.getId(), id);
+      log.warn("Patient {} attempted to view another patient's appointment ({})", currentUser.getId(), id);
       throw new ForbiddenException("Você só pode visualizar as suas próprias consultas");
     }
 
@@ -89,11 +89,11 @@ public class AppointmentService {
   }
 
   public List<AppointmentResponseDTO> getPatientAppointments(UUID patientId, boolean onlyFuture) {
-    log.info("Buscando consultas do paciente com id: {} (somente futuras: {})", patientId, onlyFuture);
+    log.info("Fetching appointments for patient with ID: {} (only future: {})", patientId, onlyFuture);
 
     User currentUser = getAuthenticatedUser();
     if (currentUser.getRole() == UserRole.PATIENT && !currentUser.getId().equals(patientId)) {
-      log.warn("Paciente {} tentou visualizar consultas do paciente {}", currentUser.getId(), patientId);
+      log.warn("Patient {} attempted to view appointments of patient {}", currentUser.getId(), patientId);
       throw new ForbiddenException("Você só pode visualizar as suas próprias consultas");
     }
 
@@ -109,7 +109,7 @@ public class AppointmentService {
 
   public List<AppointmentResponseDTO> listDoctorAppointmentsByDateRange(UUID doctorId, LocalDateTime start,
       LocalDateTime end) {
-    log.info("Buscando consultas para o médico com id: {} entre {} e {}", doctorId, start, end);
+    log.info("Fetching appointments for doctor with ID: {} between {} and {}", doctorId, start, end);
 
     return appointmentRepository.findByDoctorIdAndAppointmentDateTimeBetweenOrderByAppointmentDateTime(doctorId, start,
         end)
@@ -137,12 +137,12 @@ public class AppointmentService {
 
   private void validateRoles(User patient, User doctor) {
     if (patient.getRole() != UserRole.PATIENT) {
-      log.warn("O id informado em patientId ({}) não pertence a um paciente", patient.getId());
+      log.warn("The ID provided in patientId ({}) does not belong to a patient", patient.getId());
       throw new InvalidRequestException("O id informado em patientId não pertence a um paciente");
     }
 
     if (doctor.getRole() != UserRole.DOCTOR) {
-      log.warn("O id informado em doctorId ({}) não pertence a um médico", doctor.getId());
+      log.warn("The ID provided in doctorId ({}) does not belong to a doctor", doctor.getId());
       throw new InvalidRequestException("O id informado em doctorId não pertence a um médico");
     }
   }

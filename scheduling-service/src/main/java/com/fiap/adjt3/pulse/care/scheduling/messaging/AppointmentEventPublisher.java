@@ -27,7 +27,7 @@ public class AppointmentEventPublisher {
   public void publish(Appointment appointment, AppointmentEventType eventType) {
     AppointmentEventDTO event = toEvent(appointment, eventType);
 
-    log.info("Publicando evento {} para a consulta {}", eventType, appointment.getId());
+    log.info("Publishing {} event for appointment {}", eventType, appointment.getId());
 
     rabbitTemplate.convertAndSend(appointmentExchange, appointmentRoutingKey, event);
   }
