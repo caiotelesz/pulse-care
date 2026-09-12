@@ -250,10 +250,6 @@ O projeto não possui testes unitários/integração automatizados além do test
 
 Projeto individual desenvolvido para o **Tech Challenge — Fase 3** da **Pós-Tech FIAP**, disciplina de Arquitetura e Desenvolvimento Java.
 
-## 👤 Autor
-
-Caio Teles
-
 ## 🔗 Links Úteis
 
 - GraphiQL (scheduling-service) → http://localhost:8081/graphiql
