@@ -1,0 +1,11 @@
+# - Força LF para a maioria dos arquivos de texto, independente do core.autocrlf configurado em cada máquina 
+# - Evita quebra do shebang do mvnw no Linux/Docker.
+* text=auto eol=lf
+
+# Scripts nativos do Windows continuam com CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# roda dentro de containers Linux
+mvnw text eol=lf
+.mvn/wrapper/maven-wrapper.properties text eol=lf
